@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Lottery Manager v15.1</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ===================== SPLASH SCREEN ===================== -->
+<div id="splashScreen">
+  <div id="splashBg"></div>
+  <img id="splashImg" src="assets/splash.svg" alt="School Lottery Fundraiser">
+  <div id="splashContent">
+    <div id="splashTitle">School Lottery Manager</div>
+    <div id="splashSub">Fundraiser Draw System</div>
+    <button id="splashEnter">Let's Go →</button>
+  </div>
+  <div id="splashDismiss">Loading…</div>
+</div>
+
+<header>
+    <div class="header-logo">
+        <img id="schoolLogo" src="" alt="">
+        <span id="headerTitle">School Lottery Manager</span>
+    </div>
+    <nav class="header-nav">
+        <button id="navManager"    class="nav-tab active-tab">🏫 School</button>
+        <button id="navLottery"    class="nav-tab">🎲 Lottery</button>
+        <button id="navFundraiser" class="nav-tab">📋 Fundraiser</button>
+        <button id="navHowTo"      class="nav-tab">❓ How To</button>
+    </nav>
+    <div class="header-spacer" id="headerRightSpacer" style="width:0;"></div>
+</header>
+
+<nav class="bottom-nav">
+    <button id="navManager2"    class="bnav-btn active-tab"><span class="icon">🏫</span>School</button>
+    <button id="navLottery2"    class="bnav-btn"><span class="icon">🎲</span>Lottery</button>
+    <button id="navFundraiser2" class="bnav-btn"><span class="icon">📋</span>Fundraiser</button>
+    <button id="navHowTo2"      class="bnav-btn"><span class="icon">❓</span>How To</button>
+</nav>
+
+<div id="overlay">Working…</div>
+
+<main>
+
+<!-- ===================== PANEL: MANAGER ===================== -->
+<section id="panelManager" class="panel active">
+    <h2>School Manager</h2>
+    <div class="layout">
+
+        <aside class="sidebar" id="managerSidebar">
+            <div id="activeFiltersDisplay" class="active-filters-display" style="display:none;"></div>
+            <button class="sidebar-header" onclick="App.UI.toggleSidebar('managerSidebar')">
+                <span class="sidebar-header-title">⚙ Filters &amp; Actions</span>
+                <span class="sidebar-chevron">▼</span>
+            </button>
+            <div class="sidebar-body" id="managerSidebarBody">
+            <section>
+                <div class="section-collapse-header" onclick="App.UI.toggleSection(this)">
+                    <h3 style="margin:0;">Classes <span class="info-icon">ℹ<div class="info-tooltip">Click a class name to filter the student table to that teacher only. The active filter is always shown above this sidebar. Click ✕ to clear.</div></span></h3>
+                    <span class="section-chev">▼</span>
+                </div>
+                <div class="section-collapse-body open">
+                    <button id="btnViewAllClasses" class="btn-secondary" style="margin-bottom:6px;margin-top:6px;">View All Classes</button>
+                    <div id="classList"></div>
+                </div>
+            </section>
+
+            <section>
+                <h3>Export <span class="info-icon">ℹ<div class="info-tooltip">Export Class downloads only the currently filtered class. Export All downloads every student. Both produce a CSV you can open in Excel.</div></span></h3>
+                <button id="btnExportClass" class="btn-secondary">Export Class</button>
+                <button id="btnExportAll"   class="btn-secondary">Export All</button>
+            </section>
+            </div><!-- /sidebar-body -->
+        </aside>
+
+        <div class="content">
+            <!-- 1. Summary Stats -->
+            <div id="managerStats"></div>
+
+            <!-- 2. Teacher Summary -->
+            <h3 style="margin-top:16px;">Classes <span class="info-icon">ℹ<div class="info-tooltip">Summary by teacher. Enrolled = total students on roster. Participating = students with any donation amount. Rate = participation %. Click any column header to sort.</div></span></h3>
+            <div class="table-container table-scroll-200">
+                <table id="teacherTable">
+                    <thead>
+                    <tr>
+                        <th data-sort-key="teacher">Teacher</th>
+                        <th data-sort-key="enrolled"     style="text-align:center;">Enrolled</th>
+                        <th data-sort-key="participating" style="text-align:center;">Participating</th>
+                        <th data-sort-key="pct"           style="text-align:center;">Rate</th>
+                        <th data-sort-key="online"  style="text-align:right;">Online</th>
+                        <th data-sort-key="cash"    style="text-align:right;">Cash</th>
+                        <th data-sort-key="total"   style="text-align:right;">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- 3. Student Table -->
+            <div style="display:flex;align-items:center;gap:10px;margin-top:16px;">
+                <h3 style="margin:0;">Students <span class="info-icon">ℹ<div class="info-tooltip">Every student on the roster. Click Online or Cash cells to edit amounts directly — changes are tracked as manual adjustments. Click column headers to sort.</div></span></h3>
+                <input type="text" id="studentSearch" placeholder="Search name or teacher…"
+                    style="flex:1;max-width:280px;padding:5px 10px;border-radius:6px;border:1px solid #d1d5db;font-size:12px;background:#fff;color:#111827;">
+                <span id="studentSearchCount" style="font-size:11px;color:#6b7280;"></span>
+            </div>
+            <div class="table-container table-scroll-300">
+                <table id="studentTable">
+                    <thead>
+                    <tr>
+                        <th data-sort-key="index">#</th>
+                        <th data-sort-key="name">Student</th>
+                        <th data-sort-key="teacher">Teacher</th>
+                        <th data-sort-key="online">Online</th>
+                        <th data-sort-key="cash">Cash</th>
+                        <th data-sort-key="total">Total</th>
+                        <th data-sort-key="exclude">Exclude <span class="info-icon">ℹ<div class="info-tooltip">Tick to remove this student from the lottery draw. Their donation still counts toward class totals and stats.</div></span></th>
+                        <th data-sort-key="notes">Notes <span class="info-icon">ℹ<div class="info-tooltip">Free-text notes per student. Not used in any calculations.</div></span></th>
+                        <th>Tx <span class="info-icon">ℹ<div class="info-tooltip">Opens the full transaction history for this student — every import batch row that makes up their total. Individual transactions can be removed.</div></span></th>
+                        <th>Adj</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== PANEL: LOTTERY ===================== -->
+<section id="panelLottery" class="panel">
+    <h2>Lottery Draw</h2>
+    <div class="layout">
+
+        <aside class="sidebar" id="lotterySidebar">
+            <div id="lotteryActiveFilters" class="active-filters-display" style="display:none;"></div>
+            <button class="sidebar-header" onclick="App.UI.toggleSidebar('lotterySidebar')">
+                <span class="sidebar-header-title">⚙ Settings &amp; Actions</span>
+                <span class="sidebar-chevron">▼</span>
+            </button>
+            <div class="sidebar-body open" id="lotterySidebarBody">
+            <section>
+                <h3>Actions</h3>
+                <div style="display:flex;align-items:center;gap:6px;"><button id="btnRecalcTickets" class="btn-secondary btn-full" style="flex:1;">Generate Tickets</button><span class="info-icon">ℹ<div class="info-tooltip">Builds the full lottery ticket pool from current student data. Each student gets 1 base ticket plus extras based on donation ÷ $ per ticket. Must be done before running a draw. If you change any data after generating, tickets are invalidated and must be regenerated.</div></span></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <button id="btnRunDraw" class="btn-danger" disabled title="Generate tickets first" style="flex:1;">Run Draw</button>
+                    <span class="info-icon" style="flex-shrink:0;" title="About the draw">ℹ
+                        <div class="info-tooltip">
+                            <strong>How the Draw Works</strong><br><br>
+                            Each student receives 1 base ticket plus extra tickets based on their donation amount and the $ per ticket setting.<br><br>
+                            <strong>Seed:</strong> A random number used to shuffle tickets. Record it for full audit reproducibility — the same seed always produces the same draw order.<br><br>
+                            <strong>Manual mode:</strong> Reveals one winner at a time.<br>
+                            <strong>Auto mode:</strong> Runs all prizes in sequence automatically.<br><br>
+                            Generate tickets first, then Run Draw to begin.
+                        </div>
+                    </span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;"><button id="btnDownloadAudit" class="btn-secondary" disabled style="flex:1;">⬇ Audit CSV</button><span class="info-icon">ℹ<div class="info-tooltip">Downloads a complete audit file after the draw. Contains: the seed used, all winners in order, the full shuffled ticket pool with codes, and every donation transaction with its source file. Keep this for transparency and dispute resolution.</div></span></div>
+                <div style="display:flex;align-items:center;gap:6px;"><button id="btnPrintTickets"  class="btn-secondary" disabled style="flex:1;">🖨 Print Tickets PDF</button><span class="info-icon">ℹ<div class="info-tooltip">Generates a printable PDF of the ticket pool. Choose from: one page per student (with all their codes), tear-apart ticket stubs (32 per page), or a by-class layout for handing out to teachers. Tickets must be generated first.</div></span></div>
+            </section>
+            <section>
+                <div class="section-collapse-header" onclick="App.UI.toggleSection(this)">
+                    <h3 style="margin:0;">View by Class <span class="info-icon">ℹ<div class="info-tooltip">Filters the student table below for easier reviewing. This does NOT affect the draw — the lottery always uses the full school-wide ticket pool. Odds shown always reflect the full pool.</div></span></h3>
+                    <span class="section-chev">▼</span>
+                </div>
+                <div class="section-collapse-body open">
+                    <small style="display:block;margin-bottom:4px;margin-top:6px;">Filter display only — lottery uses full pool.</small>
+                    <div id="lotteryClassList"></div>
+                </div>
+            </section>
+
+            <section>
+                <h3>Settings <span class="info-icon">ℹ<div class="info-tooltip">These settings control how tickets are calculated. Changing them after generating tickets will show a warning and invalidate the current pool — you'll need to regenerate before drawing.</div></span></h3>
+                <label class="label-small">$ per extra ticket <span class="info-icon">ℹ<div class="info-tooltip">How much a student must raise to earn each additional ticket. Example: $5 setting → a student who raised $25 gets 1 base + 5 extra = 6 tickets total. Lower = more tickets per student. Higher = fewer tickets, less spread.</div></span>:<br>
+                    <input type="number" id="dollarPerTicket" value="5" min="0.25" step="0.25" class="input-full">
+                </label>
+                <label class="label-small" style="margin-top:8px;">Partial ticket rounding <span class="info-icon">ℹ<div class="info-tooltip">What to do when a student's donation doesn't divide evenly. Example: $12 raised at $5/ticket = 2.4 extra tickets. Round down → 2, round nearest → 2, round up → 3. Round down is the default (most conservative).</div></span>:<br>
+                    <select id="ticketRounding" class="input-full">
+                        <option value="floor">Round down (floor)</option>
+                        <option value="round">Round nearest</option>
+                        <option value="ceil">Round up (ceil)</option>
+                    </select>
+                </label><br>
+                <label class="label-small">Optional Seed <span class="info-icon">ℹ<div class="info-tooltip">The random seed controls ticket shuffling. Same seed + same data = identical tickets and draw every time. Leave blank for a new random seed each time. A fixed seed lets you print tickets in advance and trust they'll match the live draw. The seed is always recorded in the audit CSV.</div></span>:<br>
+                    <input type="text" id="seedInput" class="input-full">
+                </label><br><br>
+                <label class="label-small">Number of prizes <span class="info-icon">ℹ<div class="info-tooltip">How many winners will be drawn. Each prize draws one winning ticket from the pool. If Prevent repeat winners is on, a student can only win once regardless of how many tickets they have.</div></span>:<br>
+                    <input type="number" id="numPrizes" value="5" class="input-full">
+                </label><br><br>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="noRepeatWinners" checked>
+                    <label for="noRepeatWinners">Prevent repeat winners <span class="info-icon">ℹ<div class="info-tooltip">When checked, after a student wins their first prize all their remaining tickets are removed from the pool. This ensures prizes are spread across different students. Uncheck if you want the same student to be eligible to win multiple prizes.</div></span></label>
+                </div>
+            </section>
+
+            </div><!-- /sidebar-body -->
+        </aside>
+
+        <div class="content">
+            <!-- Ticket stale banner (also on lottery page) -->
+            <div id="lotteryPoolStaleBanner" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:8px 14px;margin-bottom:8px;font-size:12px;color:#92400e;">
+                ⚠ Ticket data has changed. <strong>Regenerate Tickets</strong> before running a new draw.
+            </div>
+            <!-- Prize Summary Cards -->
+            <div id="lotteryPrizeCards" class="prize-cards-row"></div>
+
+            <!-- Reveal Controls on lottery page -->
+            <div class="reveal-controls" id="pageRevealControls">
+                <span class="reveal-controls-label">Reveal Controls <span class="info-icon">ℹ<div class="info-tooltip">Controls which columns appear in the Winners table and during the live draw spinner. Hide student names for a dramatic reveal — show only the ticket code, make the winner come forward, then reveal their name. Toggle these at any time during or after the draw.</div></span></span>
+                <label class="reveal-toggle">
+                    <input type="checkbox" id="revealCode" checked>
+                    <span>Ticket Code</span>
+                </label>
+                <label class="reveal-toggle">
+                    <input type="checkbox" id="revealStudent" checked>
+                    <span>Student</span>
+                </label>
+                <label class="reveal-toggle">
+                    <input type="checkbox" id="revealTeacher">
+                    <span>Teacher</span>
+                </label>
+                <label class="reveal-toggle">
+                    <input type="checkbox" id="revealPosition">
+                    <span>Ticket Position</span>
+                </label>
+                <label class="reveal-toggle">
+                    <input type="checkbox" id="revealAmount">
+                    <span>Amount</span>
+                </label>
+            </div>
+
+            <h3 style="margin-top:12px;">Winners <span class="info-icon">ℹ<div class="info-tooltip">Filled in after a draw is run. Shows each prize number and winner details based on your Reveal Control settings. Re-open a completed draw by clicking Run Draw again.</div></span></h3>
+            <div class="table-container table-scroll-200">
+                <table id="winnersTable">
+                    <thead><tr id="winnersTableHead"></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <h3 style="margin-top:16px;">
+                Students
+                <span id="lotteryFilterLabel" style="font-size:11px;font-weight:normal;color:#6b7280;margin-left:8px;"></span>
+            </h3>
+            <div class="table-container table-scroll-300">
+                <table id="lotteryStudentTable">
+                    <thead>
+                    <tr>
+                        <th data-sort-key="index">#</th>
+                        <th data-sort-key="name">Student</th>
+                        <th data-sort-key="teacher">Teacher</th>
+                        <th data-sort-key="amount">Amount</th>
+                        <th data-sort-key="base">Base <span class="info-icon">ℹ<div class="info-tooltip">Every student on the roster gets 1 free base ticket regardless of donation amount.</div></span></th>
+                        <th data-sort-key="extra">Extra <span class="info-icon">ℹ<div class="info-tooltip">Bonus tickets earned from donations: floor(Total Amount ÷ $ per ticket). Adjust the $ per ticket setting in the sidebar to change how many extras each student earns.</div></span></th>
+                        <th data-sort-key="totalTickets">Total</th>
+                        <th data-sort-key="odds">Odds % <span class="info-icon">ℹ<div class="info-tooltip">This student's share of the total ticket pool as a percentage. Always reflects the full school pool even when filtered to one class. Example: 6 tickets out of 3,200 total = 0.1875%.</div></span></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="ticketPoolSection">
+                <div id="poolStaleBanner" style="display:block;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:8px 14px;margin-bottom:8px;font-size:12px;color:#92400e;">
+                    ⚠ Tickets have not been calculated yet. Click <strong>Recalculate Tickets</strong> to generate the pool before running a draw.
+                </div>
+                <h3 style="margin-top:0;">Full Ticket Pool (shuffled) <span class="info-icon">ℹ<div class="info-tooltip">The complete list of all lottery tickets in their shuffled draw order. Each ticket has a unique code (e.g. KR-048271). The draw picks winners from this pool using the seed. This table is your pre-draw audit — it can be downloaded via the Audit CSV button.</div></span></h3>
+                <div class="table-container table-scroll-300">
+                    <table id="ticketPoolTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Ticket Code</th>
+                                <th>Student</th>
+                                <th>Teacher</th>
+                                <th>Ticket</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketPoolBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== PANEL: FUNDRAISER MANAGER ===================== -->
+<section id="panelFundraiser" class="panel">
+    <h2>Fundraiser Manager</h2>
+    <div class="layout">
+
+        <aside class="sidebar" id="fundraiserSidebar">
+            <button class="sidebar-header" onclick="App.UI.toggleSidebar('fundraiserSidebar')">
+                <span class="sidebar-header-title">⚙ Actions</span>
+                <span class="sidebar-chevron">▼</span>
+            </button>
+            <div class="sidebar-body" id="fundraiserSidebarBody">
+            <section>
+                <h3>Fundraiser Info <span class="info-icon">ℹ<div class="info-tooltip">The fundraiser name appears in the browser tab, on printed ticket PDFs, and at the top of every audit CSV. Set this before printing tickets or running the draw so your exports are clearly labelled.</div></span></h3>
+                <label class="label-small">Name:
+                    <input type="text" id="fundraiserName" class="input-full" placeholder="e.g. Spring Lottery 2025">
+                </label><br><br>
+                <label class="label-small">Notes / Description:
+                    <textarea id="fundraiserNotes" class="input-full" rows="4" placeholder="Any relevant notes…" style="resize:vertical;margin-top:2px;"></textarea>
+                </label>
+                <div id="fundraiserCreated" style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:6px;"></div>
+                <div style="margin-top:14px;">
+                    <!-- Header Logo -->
+                    <label class="label-small" style="margin-bottom:4px;display:block;">Header Logo <span style="font-size:10px;color:#64748b;font-weight:400;">(title bar, small)</span></label>
+                    <label class="logo-upload-label" for="logoFileInput">
+                        <span>🖼</span> Upload header logo (PNG, JPG, SVG)
+                    </label>
+                    <input type="file" id="logoFileInput" accept="image/*" style="display:none;">
+                    <div id="logoPreviewWrap" style="display:none;">
+                        <img id="logoPreview" src="" alt="Header logo preview">
+                        <br>
+                        <button id="btnClearLogo" class="btn-secondary btn-sm" style="margin-top:6px;">✕ Remove</button>
+                    </div>
+                </div>
+                <div style="margin-top:12px;">
+                    <!-- Splash Image -->
+                    <label class="label-small" style="margin-bottom:4px;display:block;">Splash Screen Image <span style="font-size:10px;color:#64748b;font-weight:400;">(replaces default)</span></label>
+                    <label class="logo-upload-label" for="splashFileInput">
+                        <span>🎨</span> Upload splash image (PNG, JPG, SVG)
+                    </label>
+                    <input type="file" id="splashFileInput" accept="image/*" style="display:none;">
+                    <div id="splashPreviewWrap" style="display:none;">
+                        <img id="splashPreview" src="" alt="Splash image preview" style="max-height:70px;max-width:100%;object-fit:contain;border-radius:6px;border:1px solid var(--border);background:var(--surface2);padding:4px;margin-top:6px;">
+                        <br>
+                        <button id="btnClearSplash" class="btn-secondary btn-sm" style="margin-top:6px;">✕ Remove (restore default)</button>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3>Danger Zone <span class="info-icon">ℹ<div class="info-tooltip">Reset ALL Data permanently deletes every student, transaction, and import batch. This cannot be undone. Use Export Full Session first if you need to keep a backup. Only use this to start a completely fresh fundraiser.</div></span></h3>
+                <button id="btnResetAllData" class="btn-danger">Reset ALL Data</button>
+                <small>Permanently deletes all students, transactions, and import history.</small>
+            </section>
+
+            <section>
+                <h3>Imports <span class="info-icon">ℹ<div class="info-tooltip">Three ways to bring in data. Use Load School Data first to set up the roster, then Load Cash/Online to bring in donation amounts. Merge School Data adds students without removing existing ones — useful mid-fundraiser if new classes were missed.</div></span></h3>
+                <button id="btnLoadSchool"    class="btn-secondary">Load School Data</button>
+                <button id="btnAddToSchool"   class="btn-secondary">Merge School Data</button>
+                <button id="btnLoadCashOnline" class="btn-secondary">Load Cash/Online</button>
+            </section>
+
+            <section>
+                <h3>Reset Amounts <span class="info-icon">ℹ<div class="info-tooltip">Deletes either all online or all cash transactions without touching the other. Use if you need to re-import one payment type due to an error in the source file. Student records are kept intact.</div></span></h3>
+                <button id="btnResetOnline" class="btn-secondary">Reset Online Only</button>
+                <button id="btnResetCash"   class="btn-secondary">Reset Cash Only</button>
+            </section>
+
+            <section>
+                <h3>Session Backup <span class="info-icon">ℹ<div class="info-tooltip">Export Full Session saves a complete snapshot of your data: all students, every transaction, lottery settings, seed, and draw results. Load it back using Restore Session to recover from data loss or move to another device.</div></span></h3>
+                <button id="btnExportSession" class="btn-secondary">⬇ Export Full Session</button>
+                <small style="display:block;margin-top:4px;">Saves all students, donations, seed &amp; draw results. Use to restore after data loss.</small>
+                <div style="margin-top:10px;">
+                    <input type="file" id="fileReload" accept=".csv">
+                    <button id="btnReloadSession" class="btn-secondary" style="margin-top:4px;">↺ Restore Session</button>
+                </div>
+            </section>
+            </div><!-- /sidebar-body -->
+        </aside>
+
+        <div class="content">
+            <!-- Fundraiser stats -->
+            <div id="fundraiserStats"></div>
+
+            <!-- Add Student / Teacher quick entry -->
+            <div id="quickAddSection" style="margin-top:16px;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><strong style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;">Quick Add</strong><span class="info-icon">ℹ<div class="info-tooltip">Add a single student directly without importing a file. The Teacher field autocompletes from existing classes. If you enter an Online or Cash amount it is recorded as a manual transaction. Clear the name after each entry — teacher stays filled for fast batch entry within the same class.</div></span></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+                    <div style="flex:1;min-width:160px;">
+                        <label style="font-size:11px;font-weight:600;color:#6b7280;display:block;margin-bottom:3px;">STUDENT NAME</label>
+                        <input type="text" id="quickAddName" placeholder="Full name…" style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;">
+                    </div>
+                    <div style="flex:1;min-width:140px;">
+                        <label style="font-size:11px;font-weight:600;color:#6b7280;display:block;margin-bottom:3px;">TEACHER / CLASS</label>
+                        <input type="text" id="quickAddTeacher" placeholder="Mr. Smith…" list="quickTeacherList" style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;">
+                        <datalist id="quickTeacherList"></datalist>
+                    </div>
+                    <div style="flex:0 0 80px;">
+                        <label style="font-size:11px;font-weight:600;color:#6b7280;display:block;margin-bottom:3px;">ONLINE $</label>
+                        <input type="number" id="quickAddOnline" placeholder="0" min="0" step="0.01" style="width:100%;padding:7px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;">
+                    </div>
+                    <div style="flex:0 0 80px;">
+                        <label style="font-size:11px;font-weight:600;color:#6b7280;display:block;margin-bottom:3px;">CASH $</label>
+                        <input type="number" id="quickAddCash" placeholder="0" min="0" step="0.01" style="width:100%;padding:7px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;">
+                    </div>
+                    <button id="btnQuickAddStudent" class="btn-primary" style="flex-shrink:0;padding:7px 16px;">+ Add Student</button>
+                </div>
+                <div id="quickAddStatus" style="font-size:11px;margin-top:5px;color:#16a34a;min-height:16px;"></div>
+            </div>
+
+            <!-- Import History -->
+            <h3 style="margin-top:20px;">
+                Import History <span class="info-icon">ℹ<div class="info-tooltip">Every data import is listed here as a batch — filename, date, mode, and row count. Expand a batch to see individual rows. You can delete a single transaction row or an entire batch. Deletions immediately update all amounts, stats, and ticket counts.</div></span>
+                <span style="font-size:11px;font-weight:normal;color:#6b7280;">
+                    — expand any batch to review or remove individual rows
+                </span>
+            </h3>
+            <div id="fundraiserImportHistory" style="margin-top:6px;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== PANEL: WIZARD ===================== -->
+<section id="panelWizard" class="panel">
+    <h2>Import Wizard</h2>
+    <p id="wizardModeLabel">Mode: (none)</p>
+    <input type="file" id="wizardFile" accept=".csv,.xlsx,.xls" style="margin-bottom:6px;">
+    <div style="margin-bottom:10px;">
+        <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer;color:#475569;">
+            <input type="checkbox" id="wizardNoHeader" style="accent-color:#2563eb;">
+            <span>File has no header row (use Column 1, Column 2… as names)</span>
+        </label>
+    </div>
+
+    <div id="wizardImportModeSection" style="display:none;margin:10px 0;padding:10px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;">
+        <strong style="font-size:13px;">Import Mode</strong>
+        <div style="margin-top:8px;display:flex;gap:24px;flex-wrap:wrap;">
+            <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="importMode" id="importModeAccumulate" value="accumulate" checked>
+                <span><strong>Accumulate</strong> — add this file's donations on top of existing totals</span>
+            </label>
+            <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="importMode" id="importModeReset" value="reset">
+                <span><strong>Reset &amp; Re-sum</strong> — wipe all transactions, re-import everything from this file</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="wizardMappingSection" style="display:none;margin-top:10px;">
+        <h3>Column Mapping</h3>
+        <div id="mappingContainer"></div>
+
+        <div class="wizard-layout" style="margin-top:12px;">
+            <div class="wizard-column">
+                <h3>Raw File Preview (first 10 rows)</h3>
+                <div class="table-container table-scroll-300">
+                    <table id="wizardPreviewTable"><thead></thead><tbody></tbody></table>
+                </div>
+            </div>
+            <div class="wizard-column">
+                <h3>Mapped Preview</h3>
+                <div class="table-container table-scroll-300">
+                    <table id="wizardMappedTable">
+                        <thead>
+                        <tr>
+                            <th>Student Name</th><th>Teacher</th>
+                            <th>Online</th><th>Cash</th>
+                            <th>Date</th><th>Notes</th><th>Exclude</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="wizardImportSummary" style="margin-top:10px;"></div>
+        <button id="wizardImport" class="btn-primary" style="margin-top:10px;">Import</button>
+    </div>
+</section>
+
+<!-- ===================== PANEL: HOW TO ===================== -->
+<section id="panelHowTo" class="panel">
+    <div class="howto-wrap">
+
+        <h2 style="margin-bottom:4px;">How To Use School Lottery Manager</h2>
+        <p class="howto-intro">A complete guide to setting up, managing, and running your school fundraiser lottery.</p>
+
+        <!-- ─── QUICK START ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">⚡ Quick Start — From Zero to Draw</div>
+            <div class="howto-steps">
+                <div class="howto-step"><span class="howto-step-num">1</span><div><strong>Name your fundraiser</strong> — Go to <em>Fundraiser Manager</em> and enter a name and description. This appears on printed tickets and audit files.</div></div>
+                <div class="howto-step"><span class="howto-step-num">2</span><div><strong>Load your school roster</strong> — On <em>School Manager</em>, click <strong>Load School Data</strong> and import a CSV or Excel file with student names and teachers.</div></div>
+                <div class="howto-step"><span class="howto-step-num">3</span><div><strong>Import donation data</strong> — Click <strong>Load Cash/Online</strong> to import fundraising amounts. Use <em>Accumulate</em> to add on top of existing, or <em>Reset &amp; Re-sum</em> to replace.</div></div>
+                <div class="howto-step"><span class="howto-step-num">4</span><div><strong>Review amounts</strong> — Check the student table. Edit any cell directly. The teacher summary shows class-by-class totals and participation rates.</div></div>
+                <div class="howto-step"><span class="howto-step-num">5</span><div><strong>Go to Lottery Draw</strong> — Set the dollar-per-ticket value, click <strong>Recalculate Tickets</strong> to generate the ticket pool, then click <strong>Run Draw</strong>.</div></div>
+                <div class="howto-step"><span class="howto-step-num">6</span><div><strong>Download the Audit CSV</strong> — After the draw, download the audit file which records the seed, all winners, the full ticket pool, and every transaction.</div></div>
+            </div>
+        </div>
+
+        <!-- ─── SCHOOL MANAGER ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">🏫 School Manager</div>
+            <p class="howto-p">The central hub for student data, amounts, and class management.</p>
+
+            <div class="howto-subsection">Importing Data</div>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Load School Data</div><div class="howto-cell-desc">Imports a fresh student roster — names and teacher assignments. Replaces all existing student records. Use this at the start of a fundraiser.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Merge School Data</div><div class="howto-cell-desc">Adds new students from a file without removing existing ones. Useful if a class was missed in the initial load.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Load Cash/Online</div><div class="howto-cell-desc">Imports fundraising amounts. Choose <strong>Accumulate</strong> to add on top of existing totals (e.g. a second collection round), or <strong>Reset &amp; Re-sum</strong> to wipe all transactions and start fresh from this file.</div></div>
+            </div>
+
+            <div class="howto-subsection">Column Mapping</div>
+            <p class="howto-p">When importing, the wizard shows your file's raw columns and lets you map them to the correct fields. The system tries to auto-detect common column names. You can map a single column to both Online and Cash if your file has a single "Amount" column.</p>
+
+            <div class="howto-subsection">Student Table</div>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Search box</div><div class="howto-cell-desc">Filter by student name or teacher in real time. The count badge shows how many are displayed vs total.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Inline editing</div><div class="howto-cell-desc">Click any Online or Cash cell to edit the amount directly. Changes create a "manual adjustment" transaction so the edit history is preserved.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Exclude checkbox</div><div class="howto-cell-desc">Checking Exclude removes that student from the lottery draw. Their data remains intact — they just won't receive tickets.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Notes field</div><div class="howto-cell-desc">Free-text notes per student. Not used in calculations.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">📋 Tx button</div><div class="howto-cell-desc">Opens the transaction history for that student — shows every import batch row that contributed to their total, with the ability to remove individual transactions.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Column headers</div><div class="howto-cell-desc">Click any column header to sort. Click again to reverse. Sort state is preserved when switching tabs.</div></div>
+            </div>
+
+            <div class="howto-subsection">Class Summary Table</div>
+            <p class="howto-p">Shows each teacher's class with enrolled count, participating count, participation rate %, online total, cash total, and grand total. A totals row at the bottom summarises the whole school. Click a class name in the sidebar to filter the student table to that class only.</p>
+
+            <div class="howto-subsection">Summary Stats</div>
+            <p class="howto-p">The stats cards at the top update automatically as data changes. They show the totals and leaders for the current filter (all classes, or a single class). <strong>Top Student</strong>, <strong>Top Class by Raised</strong>, and <strong>Most Participants</strong> update dynamically.</p>
+
+            <div class="howto-subsection">Export &amp; Reload</div>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Export Class</div><div class="howto-cell-desc">Exports the currently filtered class (or all students if no filter) to a CSV file.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Export All</div><div class="howto-cell-desc">Exports every student regardless of filter.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Reload Session</div><div class="howto-cell-desc">Re-imports a CSV previously exported from this tool. Useful for restoring a session from a backup file.</div></div>
+            </div>
+        </div>
+
+        <!-- ─── FUNDRAISER MANAGER ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">📋 Fundraiser Manager</div>
+            <p class="howto-p">The home base for your fundraiser's identity and complete history.</p>
+
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Name &amp; Notes</div><div class="howto-cell-desc">Enter a fundraiser name (e.g. "Spring Lottery 2025") and any notes. The name appears in the browser tab header, on printed ticket PDFs, and at the top of the audit CSV.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Stats cards</div><div class="howto-cell-desc">Shows school-wide totals, participation rates, averages, and leader boards — the same layout as School Manager but always for the whole school regardless of any class filter.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Import History</div><div class="howto-cell-desc">Every import batch is listed here with filename, date/time, mode, and row count. Expand any batch to see individual rows. You can delete a single row transaction or an entire batch. Deletions update all amounts and stats immediately.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Reset ALL Data</div><div class="howto-cell-desc">Permanently deletes all students, transactions, and import history. Requires confirmation. Use this to start a brand new fundraiser.</div></div>
+            </div>
+        </div>
+
+        <!-- ─── LOTTERY DRAW ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">🎲 Lottery Draw</div>
+            <p class="howto-p">Everything needed to run a fair, auditable, and exciting draw.</p>
+
+            <div class="howto-subsection">Ticket Calculation</div>
+            <p class="howto-p">Each student receives <strong>1 base ticket</strong> plus 1 additional ticket for every <em>N</em> dollars raised, where N is the "Dollar per extra ticket" setting. A student who raises $25 with a $5/ticket setting earns 1 + 5 = 6 tickets total.</p>
+            <p class="howto-p">Ticket codes are in the format <strong>XX-NNNNNN</strong> (two letters + six digits, e.g. <code>KR-048271</code>). Codes are <em>seeded and deterministic</em> — the same seed always produces the same codes for the same pool of students. This is important for printed tickets.</p>
+
+            <div class="howto-subsection">Settings</div>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Dollar per extra ticket</div><div class="howto-cell-desc">How much a student must raise to earn each additional ticket. Default is $5. Changing this and recalculating resets the ticket pool.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Optional Seed</div><div class="howto-cell-desc">Type any text here to fix the random seed. Same seed + same data = identical tickets and draw every time. Leave blank for a random seed each recalculation. The seed is always recorded in the audit CSV.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Number of prizes</div><div class="howto-cell-desc">How many winners to draw.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Prevent repeat winners</div><div class="howto-cell-desc">When checked, once a student wins a prize all their remaining tickets are removed from the pool for subsequent prizes.</div></div>
+            </div>
+
+            <div class="howto-subsection">Recalculate Tickets</div>
+            <p class="howto-p">Builds the full ticket pool from current student data and shuffles it using the seed. The result appears in the <strong>Full Ticket Pool</strong> table showing each ticket's code, student, teacher, and "X of Y" position. If a draw has already run, recalculating will warn you with the previous seed and offer to download the audit CSV before resetting.</p>
+
+            <div class="howto-subsection">Reveal Controls</div>
+            <p class="howto-p">These checkboxes control which columns appear in the <strong>Winners table</strong> on this page. This is useful for live events — you can hide the student name and only show the ticket code, so the winner must come forward and identify themselves before their name is revealed. Toggle the controls during or after the draw to progressively reveal information.</p>
+
+            <div class="howto-subsection">Class Filter</div>
+            <p class="howto-p">Use the class buttons in the sidebar to filter the student table by teacher for easier reviewing. <strong>This does not affect the lottery draw</strong> — the draw always uses the full school pool. Odds shown are always the student's share of the complete pool.</p>
+
+            <div class="howto-subsection">Running the Draw</div>
+            <p class="howto-p">Click <strong>Run Draw</strong>. You'll be asked to choose a draw mode:</p>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">🖐 One by One</div><div class="howto-cell-desc">The spinner draws each prize sequentially with an automatic pause between each winner. Best for a controlled reveal where you announce each winner before moving on.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">▶▶ Auto (Sequential)</div><div class="howto-cell-desc">All prizes are drawn back to back automatically with a shorter pause between each. Good for drawing many prizes quickly.</div></div>
+            </div>
+            <p class="howto-p">During the draw, the spinning ticket code lands on the winner's code. The winner is added to the running list. After all prizes are drawn, a Congratulations banner and confetti animation play. Closing and re-opening the draw shows the results without re-running.</p>
+
+            <div class="howto-subsection">Audit CSV</div>
+            <p class="howto-p">After the draw completes, the <strong>⬇ Audit CSV</strong> button becomes available (both on the lottery page and in the draw modal). The audit file contains: fundraiser name and seed, a winners list, the complete shuffled ticket pool with codes, and every donation transaction with its import source. This file is the complete record of provenance for the draw.</p>
+        </div>
+
+        <!-- ─── TICKET PRINTING ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">🖨 Printing Tickets</div>
+            <p class="howto-p">After generating tickets (Recalculate Tickets), click <strong>🖨 Print Tickets PDF</strong> to open the print dialog. Choose a layout and scope, then click Generate PDF.</p>
+
+            <div class="howto-subsection">Layout Options</div>
+            <div class="howto-table">
+                <div class="howto-row">
+                    <div class="howto-cell-label">One page per student</div>
+                    <div class="howto-cell-desc">Each student gets their own page listing all their ticket codes in a clean table sorted alphabetically. Includes their name, class, amount raised, ticket number (e.g. "3 of 7"), pool position, and a QR code. If a student has many tickets the page spills to a second sheet. Sorted by teacher then student name for easy distribution by class.</div>
+                </div>
+                <div class="howto-row">
+                    <div class="howto-cell-label">Ticket stubs</div>
+                    <div class="howto-cell-desc">32 stubs per page (4 columns × 8 rows) with dashed cut lines. Each stub shows the fundraiser name, student name, teacher, ticket code, and ticket position. Print and cut apart to give each student a physical stub for the draw bowl.</div>
+                </div>
+                <div class="howto-row">
+                    <div class="howto-cell-label">By class</div>
+                    <div class="howto-cell-desc">One section per teacher showing all students in that class and their ticket codes. Each student has a header row with their name and amount, followed by their codes with positions. If a class is large it automatically continues on the next page. Good for distributing to teachers to hand out to students.</div>
+                </div>
+            </div>
+
+            <div class="howto-subsection">Alphabetical codes</div>
+            <p class="howto-p">Within each student's ticket list, codes are always sorted alphabetically (AA-000000 → ZZ-999999). This makes it easy for a winner to find their ticket code quickly during the draw.</p>
+
+            <div class="howto-subsection">Print settings tip</div>
+            <p class="howto-p">All PDFs use a white background to minimise ink usage. When printing from your PDF viewer, set margins to <em>None</em> or <em>Minimum</em> for best results. For stub sheets, use a paper cutter rather than scissors for cleaner cuts.</p>
+        </div>
+
+        <!-- ─── DATA INTEGRITY ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">🔒 Data Integrity &amp; Reproducibility</div>
+
+            <div class="howto-subsection">Seeds and reproducibility</div>
+            <p class="howto-p">The seed is the master key to the draw. Every ticket code assignment and every winner selection is derived mathematically from the seed + student data. Given the same seed and the same student data you will always get the same tickets and the same winners. This means:</p>
+            <ul class="howto-list">
+                <li>If you type a fixed seed before recalculating, you can print tickets in advance and trust they'll match the draw.</li>
+                <li>The audit CSV records the seed, so any draw can be independently verified by anyone with this tool and the same student data.</li>
+                <li>If you leave the seed blank, a random one is generated and stored — it's shown in the recalculate warning dialog and always saved to the audit CSV.</li>
+            </ul>
+
+            <div class="howto-subsection">Warnings when data changes</div>
+            <p class="howto-p">If you edit student amounts or import new data <em>after</em> tickets have been generated, a warning dialog appears. It shows the current seed and offers a download of the current audit before you proceed. Proceeding invalidates the ticket pool — you'll need to recalculate with a new seed before running a draw.</p>
+
+            <div class="howto-subsection">Transaction history</div>
+            <p class="howto-p">Every amount in the system is built from individual transactions, never a single overwrite. Each import batch records its filename, date, mode, and every row it contained. Manual edits via the inline cells create their own "manual adjustment" batch. You can inspect or remove any individual transaction without affecting others. This means the full history of how every dollar was recorded is always available.</p>
+        </div>
+
+        <!-- ─── TIPS ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">💡 Tips &amp; Best Practices</div>
+            <ul class="howto-list">
+                <li><strong>Name your fundraiser first</strong> — the name appears on every PDF and CSV export, making files easier to identify later.</li>
+                <li><strong>Use the seed field for a live event</strong> — set a seed, publish it before the draw as a transparency measure, then run. Anyone can verify the result is not manipulated.</li>
+                <li><strong>Print tickets the day before</strong> — generate tickets with a fixed seed, print the PDF, then run the draw the next day with the same seed. Students get their physical stubs in advance.</li>
+                <li><strong>Use Reveal Controls for drama</strong> — set it to show only Ticket Code, so the announcer reads out the code and the winner has to come forward. Then reveal Teacher, then Name.</li>
+                <li><strong>Multiple import rounds</strong> — use <em>Accumulate</em> mode for each new collection period. Each import appears separately in the history so you can track which students paid in each round.</li>
+                <li><strong>Import History on Fundraiser Manager</strong> — review every import batch before the draw to catch duplicates or data errors. You can delete individual rows or whole batches.</li>
+                <li><strong>Export before Reset</strong> — the Reset ALL Data button on Fundraiser Manager is permanent. Always export or download the audit CSV first if you need a record.</li>
+                <li><strong>The Exclude checkbox</strong> — useful for staff children, prize donors, or anyone who should not be in the draw. Their donation still counts toward class totals and stats.</li>
+            </ul>
+        </div>
+
+        <!-- ─── COLUMN GUIDE ─── -->
+        <div class="howto-section">
+            <div class="howto-section-title">📊 Column &amp; Field Reference</div>
+            <div class="howto-table">
+                <div class="howto-row"><div class="howto-cell-label">Online</div><div class="howto-cell-desc">Sum of all online payment transactions for this student.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Cash</div><div class="howto-cell-desc">Sum of all cash payment transactions for this student.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Total</div><div class="howto-cell-desc">Online + Cash combined.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Base</div><div class="howto-cell-desc">The 1 free ticket every enrolled student receives regardless of donation amount.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Extra</div><div class="howto-cell-desc">Additional tickets earned from donations: floor(Total ÷ dollar-per-ticket).</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Total Tickets</div><div class="howto-cell-desc">Base + Extra. This is how many entries the student has in the draw pool.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Odds %</div><div class="howto-cell-desc">This student's total tickets as a percentage of the full school ticket pool. Always reflects the whole-school pool even when filtered to one class.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Rate</div><div class="howto-cell-desc">Participation rate for a class: (students with any donation) ÷ (total enrolled) × 100%.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Ticket X of Y</div><div class="howto-cell-desc">In the ticket pool table and PDFs, this shows which of a student's tickets this is. E.g. "3 / 7" means the 3rd of 7 tickets belonging to this student.</div></div>
+                <div class="howto-row"><div class="howto-cell-label">Pool Position</div><div class="howto-cell-desc">Where this specific ticket falls in the shuffled draw pool. The lower the number, the earlier it appears in the shuffled order — this has no effect on who wins since the winner is selected by RNG.</div></div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ===================== TRANSACTION MODAL ===================== -->
+<div id="txModal">
+    <div id="txModalOverlay" style="position:absolute;inset:0;"></div>
+    <div id="txModalInner">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 id="txModalTitle" style="margin:0;font-size:16px;"></h3>
+            <button id="txModalClose" class="btn-secondary" style="padding:4px 10px;">✕ Close</button>
+        </div>
+        <div class="table-container">
+            <table id="txModalTable">
+                <thead>
+                <tr>
+                    <th>Import Batch</th><th>Row #</th><th>Date</th>
+                    <th>Online</th><th>Cash</th><th>Notes</th><th></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- ===================== AMOUNT UPDATE MODAL ===================== -->
+<div id="amountModal">
+    <div id="amountModalInner">
+        <div id="amountModalName">Student Name</div>
+        <div id="amountModalSub">Update donation amount</div>
+        <div id="amountModalCurrent">
+            Online: <strong id="amountModalOnlineVal">$0.00</strong>
+            &nbsp;·&nbsp;
+            Cash: <strong id="amountModalCashVal">$0.00</strong>
+            &nbsp;·&nbsp;
+            Total: <strong id="amountModalCurrentVal">$0.00</strong>
+        </div>
+        <div class="amount-modal-section-label">Direction</div>
+        <div class="amount-modal-type">
+            <button class="amount-type-btn active-increase" id="btnAmountIncrease">▲ Increase</button>
+            <button class="amount-type-btn" id="btnAmountDecrease">▼ Decrease</button>
+        </div>
+        <div class="amount-modal-section-label">Field</div>
+        <div class="amount-modal-type">
+            <button class="amount-type-btn active-field" id="btnAmountFieldCash">💵 Cash</button>
+            <button class="amount-type-btn" id="btnAmountFieldOnline">🌐 Online</button>
+        </div>
+        <div id="amountModalField">
+            <span id="amountModalFieldLabel">Amount to add:</span>
+            <input type="number" id="amountModalInput" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="amount-modal-row">
+            <button id="amountModalApply">Apply</button>
+            <button id="amountModalCancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== DRAW MODAL ===================== -->
+
+<!-- ===================== DRAW MODE PROMPT ===================== -->
+<div id="drawModeModal">
+    <div class="draw-mode-dialog">
+        <h3 style="margin:0 0 8px;font-size:20px;color:#f1f5f9;">Ready to Draw?</h3>
+        <p style="color:#94a3b8;font-size:14px;margin:0 0 24px;">Choose how you want to run the draw:</p>
+        <div class="draw-mode-options">
+            <button id="btnDrawModeManual" class="draw-mode-btn">
+                <span class="draw-mode-icon">🖐</span>
+                <span class="draw-mode-title">One by One</span>
+                <span class="draw-mode-desc">You control each reveal — great for a live event</span>
+            </button>
+            <button id="btnDrawModeAuto" class="draw-mode-btn">
+                <span class="draw-mode-icon">▶▶</span>
+                <span class="draw-mode-title">Auto (Sequential)</span>
+                <span class="draw-mode-desc">All prizes drawn automatically, back to back</span>
+            </button>
+        </div>
+        <button id="btnDrawModeCancel" class="btn-secondary" style="margin-top:20px;width:100%;">Cancel</button>
+    </div>
+</div>
+
+
+<!-- ===================== TICKET PRINT MODAL ===================== -->
+<div id="ticketPrintModal">
+    <div class="draw-mode-dialog" style="max-width:460px;">
+        <h3 style="margin:0 0 6px;font-size:20px;color:#f1f5f9;">🖨 Print Tickets</h3>
+        <p style="color:#94a3b8;font-size:13px;margin:0 0 20px;">Choose a layout then generate the PDF.</p>
+
+        <div style="text-align:left;margin-bottom:16px;">
+            <label style="font-size:12px;color:#94a3b8;display:block;margin-bottom:6px;">LAYOUT</label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <label class="reveal-toggle" style="background:rgba(255,255,255,0.06);padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+                    <input type="radio" name="ticketLayout" value="one-per-student" checked>
+                    <span style="font-size:13px;"><strong>One page per student</strong> — certificate with all their ticket codes</span>
+                </label>
+                <label class="reveal-toggle" style="background:rgba(255,255,255,0.06);padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+                    <input type="radio" name="ticketLayout" value="stubs-per-page">
+                    <span style="font-size:13px;"><strong>Ticket stubs</strong> — multiple students per page, cut-apart stubs</span>
+                </label>
+                <label class="reveal-toggle" style="background:rgba(255,255,255,0.06);padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">
+                    <input type="radio" name="ticketLayout" value="by-class">
+                    <span style="font-size:13px;"><strong>By class</strong> — one page per teacher, all student tickets listed</span>
+                </label>
+            </div>
+        </div>
+
+        <div style="text-align:left;margin-bottom:20px;">
+            <label style="font-size:12px;color:#94a3b8;display:block;margin-bottom:6px;">GROUPED BY</label>
+            <select id="ticketPrintGroup" style="width:100%;padding:8px;border-radius:6px;background:#0f172a;color:#f1f5f9;border:1px solid rgba(255,255,255,0.15);font-size:13px;">
+                <option value="all">Entire school (alphabetical by teacher then student)</option>
+                <option value="teacher">One teacher only…</option>
+            </select>
+            <select id="ticketPrintTeacher" style="width:100%;padding:8px;border-radius:6px;background:#0f172a;color:#f1f5f9;border:1px solid rgba(255,255,255,0.15);font-size:13px;margin-top:6px;display:none;">
+            </select>
+        </div>
+
+        <div id="ticketPrintProgress" style="display:none;color:#94a3b8;font-size:13px;text-align:center;padding:8px;">Generating PDF…</div>
+
+        <div style="display:flex;gap:10px;">
+            <button id="btnTicketPrintGenerate" class="btn-reveal" style="flex:1;">Generate PDF</button>
+            <button id="btnTicketPrintCancel"   class="btn-secondary" style="flex:1;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="drawModal">
+
+    <!-- Confetti canvas -->
+    <canvas id="confettiCanvas" style="display:none;position:fixed;inset:0;pointer-events:none;z-index:9501;width:100%;height:100%;"></canvas>
+
+    <!-- Modal inner -->
+    <div class="draw-modal-inner">
+
+        <!-- Top bar -->
+        <div class="draw-top-bar">
+            <span id="drawPrizeLabel" class="draw-prize-label">Prize #1</span>
+            <button id="btnCloseDrawTop" class="btn-secondary btn-sm" style="margin-left:auto;">✕ Close</button>
+        </div>
+
+        <!-- Spinner -->
+        <div class="draw-spinner-wrap">
+            <div id="drawSpinnerCode" class="draw-spinner-code">——</div>
+            <div id="drawSpinnerMeta" class="draw-spinner-meta"></div>
+        </div>
+
+        <!-- Final congrats banner (shown after all prizes) -->
+        <div id="drawWinnerBanner" class="draw-winner-banner" style="display:none;"></div>
+
+        <!-- Action buttons -->
+        <div class="draw-action-row">
+            <button id="btnCloseDraw"        class="btn-secondary"  style="display:none;">✕ Close Draw</button>
+            <button id="btnNextPrize"        class="btn-next-prize" style="display:none;">Next Prize ▶</button>
+            <button id="btnDrawModalAudit"   class="btn-secondary"  style="display:none;">⬇ Audit CSV</button>
+        </div>
+
+        <!-- Running winners list -->
+        <div class="draw-winners-panel">
+            <div class="draw-winners-title">Winners So Far</div>
+            <div id="drawWinnersList"></div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/xlsx.full.min.js"></script>
+<script src="js/db.js"></script>
+<script src="js/studentModel.js"></script>
+<script src="js/sharedRenderer.js"></script>
+<script src="js/manager.js"></script>
+<script src="js/lottery.js"></script>
+<script src="js/fundraiser.js"></script>
+<script src="js/tickets.js"></script>
+<script src="js/wizard.js"></script>
+<script src="js/defaultData.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

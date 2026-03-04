@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <!-- Deep navy to rich blue gradient background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#0a0f2e"/>
+      <stop offset="45%"  stop-color="#0d1b5e"/>
+      <stop offset="100%" stop-color="#1a0a4a"/>
+    </linearGradient>
+    <!-- Gold shimmer -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#fef08a"/>
+      <stop offset="50%"  stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <!-- Ticket gradient -->
+    <linearGradient id="ticket1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="ticket2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="ticket3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="ticket4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#9f1239"/>
+      <stop offset="100%" stop-color="#f43f5e"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Star pattern -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#3b82f6" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0a0f2e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bg)"/>
+
+  <!-- Subtle center radial glow -->
+  <ellipse cx="600" cy="400" rx="480" ry="320" fill="url(#centerGlow)"/>
+
+  <!-- Background geometric dots grid -->
+  <g opacity="0.18" fill="#93c5fd">
+    <g>
+      <!-- Row pattern of small dots -->
+      <circle cx="60"  cy="60"  r="1.5"/><circle cx="120" cy="60"  r="1.5"/><circle cx="180" cy="60"  r="1.5"/>
+      <circle cx="240" cy="60"  r="1.5"/><circle cx="300" cy="60"  r="1.5"/><circle cx="360" cy="60"  r="1.5"/>
+      <circle cx="420" cy="60"  r="1.5"/><circle cx="480" cy="60"  r="1.5"/><circle cx="540" cy="60"  r="1.5"/>
+      <circle cx="600" cy="60"  r="1.5"/><circle cx="660" cy="60"  r="1.5"/><circle cx="720" cy="60"  r="1.5"/>
+      <circle cx="780" cy="60"  r="1.5"/><circle cx="840" cy="60"  r="1.5"/><circle cx="900" cy="60"  r="1.5"/>
+      <circle cx="960" cy="60"  r="1.5"/><circle cx="1020" cy="60" r="1.5"/><circle cx="1080" cy="60" r="1.5"/>
+      <circle cx="1140" cy="60" r="1.5"/>
+
+      <circle cx="60"  cy="140" r="1.5"/><circle cx="120" cy="140" r="1.5"/><circle cx="180" cy="140" r="1.5"/>
+      <circle cx="240" cy="140" r="1.5"/><circle cx="300" cy="140" r="1.5"/><circle cx="360" cy="140" r="1.5"/>
+      <circle cx="420" cy="140" r="1.5"/><circle cx="480" cy="140" r="1.5"/><circle cx="540" cy="140" r="1.5"/>
+      <circle cx="600" cy="140" r="1.5"/><circle cx="660" cy="140" r="1.5"/><circle cx="720" cy="140" r="1.5"/>
+      <circle cx="780" cy="140" r="1.5"/><circle cx="840" cy="140" r="1.5"/><circle cx="900" cy="140" r="1.5"/>
+      <circle cx="960" cy="140" r="1.5"/><circle cx="1020" cy="140" r="1.5"/><circle cx="1080" cy="140" r="1.5"/>
+      <circle cx="1140" cy="140" r="1.5"/>
+
+      <circle cx="60"  cy="660" r="1.5"/><circle cx="120" cy="660" r="1.5"/><circle cx="180" cy="660" r="1.5"/>
+      <circle cx="240" cy="660" r="1.5"/><circle cx="300" cy="660" r="1.5"/><circle cx="360" cy="660" r="1.5"/>
+      <circle cx="420" cy="660" r="1.5"/><circle cx="480" cy="660" r="1.5"/><circle cx="540" cy="660" r="1.5"/>
+      <circle cx="600" cy="660" r="1.5"/><circle cx="660" cy="660" r="1.5"/><circle cx="720" cy="660" r="1.5"/>
+      <circle cx="780" cy="660" r="1.5"/><circle cx="840" cy="660" r="1.5"/><circle cx="900" cy="660" r="1.5"/>
+      <circle cx="960" cy="660" r="1.5"/><circle cx="1020" cy="660" r="1.5"/><circle cx="1080" cy="660" r="1.5"/>
+      <circle cx="1140" cy="660" r="1.5"/>
+
+      <circle cx="60"  cy="740" r="1.5"/><circle cx="120" cy="740" r="1.5"/><circle cx="180" cy="740" r="1.5"/>
+      <circle cx="240" cy="740" r="1.5"/><circle cx="300" cy="740" r="1.5"/><circle cx="360" cy="740" r="1.5"/>
+      <circle cx="420" cy="740" r="1.5"/><circle cx="480" cy="740" r="1.5"/><circle cx="540" cy="740" r="1.5"/>
+      <circle cx="600" cy="740" r="1.5"/><circle cx="660" cy="740" r="1.5"/><circle cx="720" cy="740" r="1.5"/>
+      <circle cx="780" cy="740" r="1.5"/><circle cx="840" cy="740" r="1.5"/><circle cx="900" cy="740" r="1.5"/>
+      <circle cx="960" cy="740" r="1.5"/><circle cx="1020" cy="740" r="1.5"/><circle cx="1080" cy="740" r="1.5"/>
+      <circle cx="1140" cy="740" r="1.5"/>
+    </g>
+  </g>
+
+  <!-- ── Floating tickets (background layer, subtle) ── -->
+
+  <!-- Ticket 1 — far left, tilted -->
+  <g transform="translate(80, 280) rotate(-18)" opacity="0.35">
+    <rect width="160" height="72" rx="8" fill="url(#ticket2)"/>
+    <line x1="0" y1="36" x2="16" y2="36" stroke="white" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="144" y1="36" x2="160" y2="36" stroke="white" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <circle cx="0" cy="36" r="10" fill="#0a0f2e"/>
+    <circle cx="160" cy="36" r="10" fill="#0a0f2e"/>
+    <text x="80" y="24" text-anchor="middle" fill="white" font-size="10" font-family="monospace" opacity="0.8">TICKET</text>
+    <text x="80" y="52" text-anchor="middle" fill="white" font-size="13" font-family="monospace" font-weight="bold">PK-038291</text>
+  </g>
+
+  <!-- Ticket 2 — far right, tilted other way -->
+  <g transform="translate(970, 180) rotate(14)" opacity="0.35">
+    <rect width="160" height="72" rx="8" fill="url(#ticket3)"/>
+    <circle cx="0" cy="36" r="10" fill="#0a0f2e"/>
+    <circle cx="160" cy="36" r="10" fill="#0a0f2e"/>
+    <text x="80" y="24" text-anchor="middle" fill="white" font-size="10" font-family="monospace" opacity="0.8">TICKET</text>
+    <text x="80" y="52" text-anchor="middle" fill="white" font-size="13" font-family="monospace" font-weight="bold">MR-071845</text>
+  </g>
+
+  <!-- Ticket 3 — bottom left -->
+  <g transform="translate(50, 560) rotate(8)" opacity="0.28">
+    <rect width="140" height="64" rx="8" fill="url(#ticket4)"/>
+    <circle cx="0" cy="32" r="9" fill="#0a0f2e"/>
+    <circle cx="140" cy="32" r="9" fill="#0a0f2e"/>
+    <text x="70" y="21" text-anchor="middle" fill="white" font-size="9" font-family="monospace" opacity="0.8">TICKET</text>
+    <text x="70" y="46" text-anchor="middle" fill="white" font-size="12" font-family="monospace" font-weight="bold">SL-002944</text>
+  </g>
+
+  <!-- Ticket 4 — top right area -->
+  <g transform="translate(1000, 520) rotate(-11)" opacity="0.28">
+    <rect width="140" height="64" rx="8" fill="url(#ticket1)"/>
+    <circle cx="0" cy="32" r="9" fill="#0a0f2e"/>
+    <circle cx="140" cy="32" r="9" fill="#0a0f2e"/>
+    <text x="70" y="21" text-anchor="middle" fill="white" font-size="9" font-family="monospace" opacity="0.8">TICKET</text>
+    <text x="70" y="46" text-anchor="middle" fill="white" font-size="12" font-family="monospace" font-weight="bold">AN-190302</text>
+  </g>
+
+  <!-- ── Confetti dots scattered ── -->
+  <g filter="url(#softglow)">
+    <circle cx="140"  cy="190" r="5" fill="#fbbf24" opacity="0.7"/>
+    <circle cx="320"  cy="120" r="4" fill="#f43f5e" opacity="0.6"/>
+    <circle cx="510"  cy="160" r="3" fill="#a855f7" opacity="0.6"/>
+    <circle cx="700"  cy="100" r="5" fill="#10b981" opacity="0.6"/>
+    <circle cx="880"  cy="150" r="4" fill="#fbbf24" opacity="0.7"/>
+    <circle cx="1050" cy="110" r="3" fill="#3b82f6" opacity="0.6"/>
+    <circle cx="200"  cy="650" r="4" fill="#a855f7" opacity="0.5"/>
+    <circle cx="400"  cy="700" r="5" fill="#fbbf24" opacity="0.6"/>
+    <circle cx="800"  cy="680" r="4" fill="#f43f5e" opacity="0.5"/>
+    <circle cx="1000" cy="640" r="5" fill="#10b981" opacity="0.6"/>
+    <circle cx="950"  cy="300" r="3" fill="#fbbf24" opacity="0.5"/>
+    <circle cx="160"  cy="420" r="4" fill="#3b82f6" opacity="0.4"/>
+  </g>
+
+  <!-- Confetti rectangles (tilted) -->
+  <g opacity="0.55">
+    <rect x="230" y="105" width="12" height="5" rx="1" fill="#fbbf24" transform="rotate(35, 236, 107)"/>
+    <rect x="750" y="130" width="10" height="4" rx="1" fill="#f43f5e" transform="rotate(-25, 755, 132)"/>
+    <rect x="450" y="680" width="12" height="5" rx="1" fill="#10b981" transform="rotate(20, 456, 682)"/>
+    <rect x="900" y="610" width="10" height="4" rx="1" fill="#a855f7" transform="rotate(-40, 905, 612)"/>
+    <rect x="120" y="500" width="8"  height="4" rx="1" fill="#fbbf24" transform="rotate(15, 124, 502)"/>
+    <rect x="1080" cy="380" width="10" height="4" rx="1" fill="#f43f5e" transform="rotate(30, 1085, 382)"/>
+  </g>
+
+  <!-- ── Stars ── -->
+  <!-- 5-point star function using polygon -->
+  <g filter="url(#softglow)" opacity="0.75">
+    <!-- Star top-left area -->
+    <polygon points="220,200 226,218 244,218 230,229 235,247 220,236 205,247 210,229 196,218 214,218"
+             fill="#fbbf24" transform="scale(0.6) translate(153, 140)"/>
+    <!-- Star top-right -->
+    <polygon points="220,200 226,218 244,218 230,229 235,247 220,236 205,247 210,229 196,218 214,218"
+             fill="#fbbf24" transform="translate(890,90) scale(0.5)"/>
+    <!-- Star right mid -->
+    <polygon points="220,200 226,218 244,218 230,229 235,247 220,236 205,247 210,229 196,218 214,218"
+             fill="#a855f7" transform="translate(1090,320) scale(0.4)"/>
+    <!-- Star bottom left -->
+    <polygon points="220,200 226,218 244,218 230,229 235,247 220,236 205,247 210,229 196,218 214,218"
+             fill="#10b981" transform="translate(80,600) scale(0.45)"/>
+  </g>
+
+  <!-- ── MAIN TICKET — center hero ── -->
+  <g transform="translate(300, 280)">
+    <!-- Shadow -->
+    <rect x="8" y="12" width="600" height="240" rx="18" fill="black" opacity="0.4"/>
+    <!-- Main ticket body -->
+    <rect width="600" height="240" rx="18" fill="url(#ticket1)"/>
+    <!-- Subtle inner highlight -->
+    <rect x="1" y="1" width="598" height="118" rx="17" fill="white" opacity="0.06"/>
+    <!-- Perforation line -->
+    <line x1="0" y1="120" x2="40" y2="120" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="6,6"/>
+    <line x1="560" y1="120" x2="600" y2="120" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="6,6"/>
+    <line x1="40" y1="120" x2="560" y2="120" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="6,6"/>
+    <!-- Notch circles -->
+    <circle cx="0"   cy="120" r="22" fill="#0a0f2e"/>
+    <circle cx="600" cy="120" r="22" fill="#0a0f2e"/>
+    <!-- Decorative circles background -->
+    <circle cx="540" cy="60"  r="55" fill="rgba(255,255,255,0.05)"/>
+    <circle cx="540" cy="180" r="45" fill="rgba(255,255,255,0.04)"/>
+
+    <!-- Top half: lottery info -->
+    <text x="36" y="44" fill="rgba(255,255,255,0.65)" font-size="11" font-family="'Courier New',monospace" letter-spacing="3">SCHOOL FUNDRAISER LOTTERY</text>
+    <text x="36" y="88" fill="white" font-size="38" font-family="'Georgia',serif" font-weight="bold" filter="url(#softglow)">Lucky Draw</text>
+    <text x="36" y="108" fill="rgba(255,255,255,0.5)" font-size="11" font-family="'Courier New',monospace">ADMIT ONE · GOOD LUCK!</text>
+
+    <!-- Ticket code top right -->
+    <text x="560" y="50" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="9" font-family="monospace" letter-spacing="1">TICKET NO.</text>
+    <text x="560" y="74" text-anchor="end" fill="#fbbf24" font-size="19" font-family="'Courier New',monospace" font-weight="bold" filter="url(#softglow)">KR-048271</text>
+
+    <!-- Bottom half: stub -->
+    <text x="36" y="152" fill="rgba(255,255,255,0.55)" font-size="10" font-family="monospace" letter-spacing="2">STUB · KEEP THIS PORTION</text>
+    <text x="36" y="184" fill="white" font-size="22" font-family="'Courier New',monospace" font-weight="bold">KR-048271</text>
+    <text x="36" y="210" fill="rgba(255,255,255,0.5)" font-size="11" font-family="monospace">Ticket 3 of 7  ·  Pool Position #142</text>
+    <text x="560" y="184" text-anchor="end" fill="rgba(255,255,255,0.35)" font-size="32" font-family="Georgia,serif">🎟</text>
+  </g>
+
+  <!-- ── Trophy / prize icon area ── -->
+  <g transform="translate(548, 192)" filter="url(#glow)" opacity="0.9">
+    <text font-size="64" fill="url(#gold)">🏆</text>
+  </g>
+
+  <!-- ── Stars around trophy ── -->
+  <g fill="#fbbf24" filter="url(#softglow)">
+    <text x="534" y="196" font-size="14" opacity="0.8">✦</text>
+    <text x="608" y="188" font-size="10" opacity="0.7">✦</text>
+    <text x="526" y="218" font-size="8"  opacity="0.6">✦</text>
+  </g>
+
+  <!-- ── Text block ── -->
+  <!-- Fundraiser label -->
+  <text x="600" y="564" text-anchor="middle"
+        fill="rgba(147,197,253,0.8)" font-size="13"
+        font-family="'Courier New',monospace" letter-spacing="5">
+    SCHOOL LOTTERY FUNDRAISER
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="598" text-anchor="middle"
+        fill="rgba(255,255,255,0.35)" font-size="12"
+        font-family="Georgia,serif" font-style="italic">
+    Every ticket a chance. Every dollar a difference.
+  </text>
+
+  <!-- ── Bottom accent line ── -->
+  <line x1="360" y1="618" x2="840" y2="618" stroke="url(#gold)" stroke-width="1.5" opacity="0.4"/>
+
+</svg>
